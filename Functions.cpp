@@ -1,5 +1,5 @@
-#include <QDataStream>
 #include <QString>
+#include <windows.h>
 
 void modifyFileName(QString &fileName)
 {
@@ -26,17 +26,14 @@ void modifyFileName(QString &fileName)
     fileName.replace(indexBegin, indexEnd - indexBegin, '_' + QString::number(value));
 }
 
-void modifyFile(QDataStream &in, QDataStream &out, uint64_t modifyingValue)
+void modifyFile(HANDLE in, HANDLE out, uint64_t modifyingValue)
 {
-    uint8_t *readedRawBytes = new uint8_t[8];
-    while (!in.atEnd()) {
-        int numberReadedBytes = in.readRawData((char *) (readedRawBytes), 8);
-        uint64_t readedBlock = 0;
-        for (int i = 0; i < numberReadedBytes; ++i) {
-            readedBlock = (readedBlock << 8) + readedRawBytes[i];
-        }
-        readedBlock <<= (8 - numberReadedBytes) * 8; // дозаполняем нулями недостающий конец файла до кратноти 64 битам
-        out << (readedBlock ^ modifyingValue);
+    uint64_t *readedRawBytes = new uint64_t;
+    DWORD numberReadedBytes = 1;
+    while (ReadFile(in, reinterpret_cast<uint8_t *>(readedRawBytes), 8, &numberReadedBytes, NULL) && numberReadedBytes != 0) {
+        *readedRawBytes ^= modifyingValue;
+
+        WriteFile(out, reinterpret_cast<uint8_t *>(readedRawBytes), numberReadedBytes, NULL, NULL);
     }
-    delete[] readedRawBytes;
+    delete readedRawBytes;
 }

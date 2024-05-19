@@ -7,10 +7,10 @@
 #include <QRegularExpressionValidator>
 #include <QTimer>
 
-#include <QDataStream>
 #include <QDir>
 #include <QDirIterator>
 #include <QFileInfo>
+#include <windows.h>
 
 #include <QMessageBox>
 
@@ -197,48 +197,66 @@ void MainWindow::modifyDirectory()
 
     for (QFileInfo &fileInfo : this->getSuitableForMaskFilesInfo()) {
         if (fileInfo.isWritable()) { // проверяем можем ли мы изменять исходный файл, предполагается что если он кем то занят то не можем
-            QFile inputFile(fileInfo.absoluteFilePath());
-            QFile outputFile(this->ui->lineEdit_output_path->text() + '/' + fileInfo.fileName());
+            //QFile inputFile(fileInfo.absoluteFilePath());
+            //QFile outputFile(this->ui->lineEdit_output_path->text() + '/' + fileInfo.fileName());
 
+            QString outputFileName = this->ui->lineEdit_output_path->text() + '/' + fileInfo.fileName();
+            LPCWSTR outputFileNameWSTR = reinterpret_cast<LPCWSTR>(outputFileName.utf16());
             // модификация имени файла если чтоит чекбокс
             if (this->buttonGroup_modify->checkedId()) {
-                // задать новое имя результирующего файла добавив номер в конец
-                QString newFileName = outputFile.fileName();
-                while (outputFile.exists()) {
-                    modifyFileName(newFileName);
-                    outputFile.setFileName(newFileName);
+                // задать новое имя результирующего файла добавив номер в конец   // нужно ли удлять
+
+                while (GetFileAttributesW(outputFileNameWSTR) != INVALID_FILE_ATTRIBUTES) {
+                    modifyFileName(outputFileName);
+                    outputFileNameWSTR = reinterpret_cast<LPCWSTR>(outputFileName.utf16());
+                    //outputFile.setFileName(outputFileName);
                 }
             }
 
-            bool filtWriteCreated = outputFile.open(QFile::WriteOnly);
-            if (!filtWriteCreated) {
-                this->showInforamtionMessage("Ошибка создания результирующего файла", "Проверьте коректность введеного пути к результируюшей директории. \nОбнаружено: " + outputFile.errorString());
+            HANDLE hOutputFile = CreateFileW(outputFileNameWSTR, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+            if (hOutputFile == INVALID_HANDLE_VALUE) {
+                this->showInforamtionMessage("Ошибка создания результирующего файла", "Проверьте коректность введеного пути к результируюшей директории.");
+                CloseHandle(hOutputFile);
                 break;
             }
 
-            if (!inputFile.open(QFile::ReadOnly)) { // файлы которые не можем прочитать просто пропускаем
-                break;
+            QString inputFileName = (this->ui->lineEdit_output_path->text() + '/' + fileInfo.fileName());
+            const wchar_t * inputFileNameWSTR = qUtf16Printable(inputFileName);//reinterpret_cast<LPCWSTR>(inputFileName.utf16());
+            HANDLE hInputFile = CreateFileW(inputFileNameWSTR, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+            if (hInputFile == INVALID_HANDLE_VALUE) { // файлы которые не можем прочитать просто пропускаем
+                CloseHandle(hOutputFile);
+                CloseHandle(hInputFile);
+                continue;
             }
 
-            QDataStream in(&inputFile);
-            QDataStream out(&outputFile);
 
-            modifyFile(in, out, modifyingValue);
+            // char arr[8];
+            // DWORD numberReadedBytes;
+            // SetFilePointer(hInputFile, 0, NULL, FILE_BEGIN);
+            // bool res1 = !ReadFile(hInputFile, arr, 8, &numberReadedBytes, NULL);
 
-            inputFile.close();
-            outputFile.close();
+            // if (GetLastError() == ERROR_HANDLE_EOF) {
+            //     qDebug("END");
+            // }
+            // DWORD fileSize = GetFileSize(hInputFile, NULL);
+
+            // qDebug() << fileSize;
+
+            modifyFile(hInputFile, hOutputFile, modifyingValue);
 
             if(!this->ui->checkBox_result->isChecked()){
-                resultText.append(inputFile.fileName());
+                resultText.append(inputFileName);
                 resultText.append("\n└─────>\t"); // это красивы стрелочка если что
-                resultText.append(outputFile.fileName());
+                resultText.append(outputFileName);
                 resultText.push_back('\n');
-
             }
+
+            CloseHandle(hOutputFile);
+            CloseHandle(hInputFile);
 
             // удаление исходного файла если стоит чекбокс
             if (this->ui->checkBox_input_delete->isChecked()) {
-                inputFile.remove();
+                DeleteFile(inputFileNameWSTR);
             }
         }
     }
