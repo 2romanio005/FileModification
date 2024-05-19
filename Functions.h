@@ -1,11 +1,11 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
-#include <QString>
 #include <QDataStream>
+#include <QString>
 
-void modifyFileName(QString & fileName);
+void modifyFileName(QString &fileName);
 
-void modifyFile(QDataStream &in, QDataStream &out, uint64_t value_for_modification);
+void modifyFile(QDataStream &in, QDataStream &out, uint64_t modifyingValue);
 
 #endif // FUNCTIONS_H

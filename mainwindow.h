@@ -1,8 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
 #include <QButtonGroup>
+#include <QFileInfo>
+#include <QMainWindow>
 #include <QTimer>
 
 QT_BEGIN_NAMESPACE
@@ -30,6 +31,8 @@ private slots:
 
     void on_pushButton_start_clicked();
 
+    void on_pushButton_use_mask_clicked();
+
 public slots:
     void timerPeriodicAction();
 
@@ -42,8 +45,12 @@ private:
     QTimer *timer_periodic;
     int number_of_launches;
 
+    void showInforamtionMessage(const QString &title, const QString &text);
+
     void startTimerPeriodic();
     void stopTimerPeriodic();
+
+    QList<QFileInfo> getSuitableForMaskFilesInfo();
 
     void modifyDirectory();
 };

@@ -1,40 +1,42 @@
-#include <QString>
 #include <QDataStream>
+#include <QString>
 
-void modifyFileName(QString & fileName){
+void modifyFileName(QString &fileName)
+{
     qsizetype indexEnd = fileName.lastIndexOf('.');
-    if(indexEnd == -1){
+    if (indexEnd == -1) {
         indexEnd = fileName.length();
     }
 
     qsizetype indexBegin = indexEnd - 1;
-    while(indexBegin >= 0 && fileName[indexBegin].isDigit()){
+    while (indexBegin >= 0 && fileName[indexBegin].isDigit()) {
         --indexBegin;
     }
     ++indexBegin;
 
     int value;
-    if(indexBegin == 0 || fileName[indexBegin - 1] == QChar('/')){
+    if (indexBegin == 0 || fileName[indexBegin - 1] == '/') {
         value = 1;
         indexBegin = indexEnd;
-    } else{
+    } else {
         value = fileName.mid(indexBegin, indexEnd - indexBegin).toInt() + 1;
-        indexBegin -= (fileName[indexBegin - 1] == QChar('_'));
+        indexBegin -= (fileName[indexBegin - 1] == '_');
     }
 
-    fileName.replace(indexBegin, indexEnd - indexBegin, QChar('_') + QString::number(value));
+    fileName.replace(indexBegin, indexEnd - indexBegin, '_' + QString::number(value));
 }
 
-void modifyFile(QDataStream &in, QDataStream &out, uint64_t value_for_modification){
+void modifyFile(QDataStream &in, QDataStream &out, uint64_t modifyingValue)
+{
     uint8_t *readedRawBytes = new uint8_t[8];
-    while(!in.atEnd()){
-        int numberReadedBytes = in.readRawData((char*)(readedRawBytes), 8);
+    while (!in.atEnd()) {
+        int numberReadedBytes = in.readRawData((char *) (readedRawBytes), 8);
         uint64_t readedBlock = 0;
-        for(int i = 0; i < numberReadedBytes; ++i){
+        for (int i = 0; i < numberReadedBytes; ++i) {
             readedBlock = (readedBlock << 8) + readedRawBytes[i];
         }
-        readedBlock <<= (8 - numberReadedBytes) * 8;    // дозаполняем нулями недостающий конец файла до кратноти 64 битам
-        out << (readedBlock ^ value_for_modification);
+        readedBlock <<= (8 - numberReadedBytes) * 8; // дозаполняем нулями недостающий конец файла до кратноти 64 битам
+        out << (readedBlock ^ modifyingValue);
     }
     delete[] readedRawBytes;
 }

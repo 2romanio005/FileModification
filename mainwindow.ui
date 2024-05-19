@@ -14,29 +14,12 @@
    <string>Модификатор файлов</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
      <layout class="QFormLayout" name="formLayout">
       <property name="labelAlignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_file_mask">
-        <property name="text">
-         <string>Маска входных файлов</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit_file_mask"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_output_path">
-        <property name="text">
-         <string>Папка для результирующих файлов</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label_input_path">
         <property name="sizePolicy">
@@ -50,20 +33,6 @@
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_HEX_for_modification">
-        <property name="text">
-         <string>Переменная 64 бит в HEX формате</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLineEdit" name="lineEdit_HEX_for_modification">
-        <property name="maxLength">
-         <number>19</number>
         </property>
        </widget>
       </item>
@@ -81,6 +50,20 @@
         </item>
        </layout>
       </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_file_mask">
+        <property name="text">
+         <string>Маска исходных файлов</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_output_path">
+        <property name="text">
+         <string>Папка для результирующих файлов</string>
+        </property>
+       </widget>
+      </item>
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_15">
         <item>
@@ -90,6 +73,34 @@
          <widget class="QPushButton" name="pushButton_select_output_path">
           <property name="text">
            <string>Обзор</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_HEX_for_modification">
+        <property name="text">
+         <string>Переменная 64 бит в HEX формате</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QLineEdit" name="lineEdit_HEX_for_modification">
+        <property name="maxLength">
+         <number>19</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_file_mask"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_use_mask">
+          <property name="text">
+           <string>Найти</string>
           </property>
          </widget>
         </item>
@@ -109,7 +120,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_modify">
         <property name="text">
-         <string>Модифицировать имя выходного файла</string>
+         <string>Модифицировать имена результирующих файлов</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -119,7 +130,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_overwrite">
         <property name="text">
-         <string>Перезаписывать выходные файлы</string>
+         <string>Перезаписывать результирующие файлы</string>
         </property>
        </widget>
       </item>
@@ -139,17 +150,21 @@
      </layout>
     </item>
     <item>
-     <spacer name="verticalSpacer">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>806</width>
-        <height>184</height>
-       </size>
-      </property>
-     </spacer>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QLabel" name="label_result">
+        <property name="text">
+         <string>Результат последнего действия</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QTextBrowser" name="textBrowser_result"/>
+      </item>
+     </layout>
     </item>
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
@@ -197,6 +212,22 @@
          </widget>
         </item>
         <item>
+         <widget class="QLineEdit" name="lineEdit_period_time">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>10</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QSlider" name="horizontalSlider_period_time">
           <property name="enabled">
            <bool>false</bool>
@@ -218,16 +249,6 @@
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit_period_time">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="text">
-           <string>10</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
      </layout>
@@ -235,7 +256,7 @@
     <item>
      <widget class="QPushButton" name="pushButton_start">
       <property name="text">
-       <string>Запустить модификацию</string>
+       <string>Запустить модификацию файлов</string>
       </property>
      </widget>
     </item>
