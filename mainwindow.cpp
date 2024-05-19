@@ -211,20 +211,20 @@ void MainWindow::modifyDirectory()
                 }
             }
 
+            QString inputFileName = fileInfo.absoluteFilePath();
+            LPCWSTR inputFileNameWSTR = reinterpret_cast<LPCWSTR>(inputFileName.utf16());
+            HANDLE hInputFile = CreateFileW(inputFileNameWSTR, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+            if (hInputFile == INVALID_HANDLE_VALUE) { // файлы которые не можем прочитать просто пропускаем
+                CloseHandle(hInputFile);
+                continue;
+            }
+
             HANDLE hOutputFile = CreateFileW(outputFileNameWSTR, GENERIC_WRITE, 0, NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
             if (hOutputFile == INVALID_HANDLE_VALUE) {
                 this->showInforamtionMessage("Ошибка создания результирующего файла", "Проверьте коректность введеного пути к результируюшей директории.");
                 CloseHandle(hOutputFile);
-                break;
-            }
-
-            QString inputFileName = (this->ui->lineEdit_input_path->text() + '/' + fileInfo.fileName());
-            LPCWSTR inputFileNameWSTR = reinterpret_cast<LPCWSTR>(inputFileName.utf16());
-            HANDLE hInputFile = CreateFileW(inputFileNameWSTR, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-            if (hInputFile == INVALID_HANDLE_VALUE) { // файлы которые не можем прочитать просто пропускаем
-                CloseHandle(hOutputFile);
                 CloseHandle(hInputFile);
-                continue;
+                break;
             }
 
             modifyFile(hInputFile, hOutputFile, modifyingValue);
