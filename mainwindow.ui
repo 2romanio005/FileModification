@@ -29,7 +29,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Папка с исходными файлами</string>
+         <string>Директория с исходными файлами</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -53,14 +53,14 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_file_mask">
         <property name="text">
-         <string>Маска исходных файлов</string>
+         <string>Маска исходных файлов (рег. выр.)</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_output_path">
         <property name="text">
-         <string>Папка для результирующих файлов</string>
+         <string>Директория для результирующих файлов</string>
         </property>
        </widget>
       </item>

@@ -57,7 +57,7 @@ void MainWindow::on_radioButton_periodic_toggled(bool checked)
 // выбор папки с входными файлами
 void MainWindow::on_pushButton_select_input_path_clicked()
 {
-    const QString input_path = QFileDialog::getExistingDirectory(this, "Выбор папки с входными файлами", this->ui->lineEdit_input_path->text());
+    const QString input_path = QFileDialog::getExistingDirectory(this, "Выбор директории с входными файлами", this->ui->lineEdit_input_path->text());
 
     if (!input_path.isEmpty()) {
         this->ui->lineEdit_input_path->setText(input_path);
@@ -67,7 +67,7 @@ void MainWindow::on_pushButton_select_input_path_clicked()
 // выбор папки с выходными файлами
 void MainWindow::on_pushButton_select_output_path_clicked()
 {
-    const QString output_path = QFileDialog::getExistingDirectory(this, "Выбор папки с выходными файлами", this->ui->lineEdit_output_path->text());
+    const QString output_path = QFileDialog::getExistingDirectory(this, "Выбор директории с выходными файлами", this->ui->lineEdit_output_path->text());
 
     if (!output_path.isEmpty()) {
         this->ui->lineEdit_output_path->setText(output_path);
@@ -197,19 +197,17 @@ void MainWindow::modifyDirectory()
 
     for (QFileInfo &fileInfo : this->getSuitableForMaskFilesInfo()) {
         if (fileInfo.isWritable()) { // проверяем можем ли мы изменять исходный файл, предполагается что если он кем то занят то не можем
-            //QFile inputFile(fileInfo.absoluteFilePath());
-            //QFile outputFile(this->ui->lineEdit_output_path->text() + '/' + fileInfo.fileName());
+            // дальше идёт winApi, т.к. я не нашёл способа открыть файл в эксклюзивном режиме в Qt. Вариация того же, написанного на Qt, в верисии v0.0.1
 
             QString outputFileName = this->ui->lineEdit_output_path->text() + '/' + fileInfo.fileName();
             LPCWSTR outputFileNameWSTR = reinterpret_cast<LPCWSTR>(outputFileName.utf16());
-            // модификация имени файла если чтоит чекбокс
+            // модификация имени файла если стоит чекбокс
             if (this->buttonGroup_modify->checkedId()) {
                 // задать новое имя результирующего файла добавив номер в конец   // нужно ли удлять
 
                 while (GetFileAttributesW(outputFileNameWSTR) != INVALID_FILE_ATTRIBUTES) {
                     modifyFileName(outputFileName);
                     outputFileNameWSTR = reinterpret_cast<LPCWSTR>(outputFileName.utf16());
-                    //outputFile.setFileName(outputFileName);
                 }
             }
 
@@ -220,27 +218,14 @@ void MainWindow::modifyDirectory()
                 break;
             }
 
-            QString inputFileName = (this->ui->lineEdit_output_path->text() + '/' + fileInfo.fileName());
-            const wchar_t * inputFileNameWSTR = qUtf16Printable(inputFileName);//reinterpret_cast<LPCWSTR>(inputFileName.utf16());
+            QString inputFileName = (this->ui->lineEdit_input_path->text() + '/' + fileInfo.fileName());
+            LPCWSTR inputFileNameWSTR = reinterpret_cast<LPCWSTR>(inputFileName.utf16());
             HANDLE hInputFile = CreateFileW(inputFileNameWSTR, GENERIC_READ, 0, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
             if (hInputFile == INVALID_HANDLE_VALUE) { // файлы которые не можем прочитать просто пропускаем
                 CloseHandle(hOutputFile);
                 CloseHandle(hInputFile);
                 continue;
             }
-
-
-            // char arr[8];
-            // DWORD numberReadedBytes;
-            // SetFilePointer(hInputFile, 0, NULL, FILE_BEGIN);
-            // bool res1 = !ReadFile(hInputFile, arr, 8, &numberReadedBytes, NULL);
-
-            // if (GetLastError() == ERROR_HANDLE_EOF) {
-            //     qDebug("END");
-            // }
-            // DWORD fileSize = GetFileSize(hInputFile, NULL);
-
-            // qDebug() << fileSize;
 
             modifyFile(hInputFile, hOutputFile, modifyingValue);
 
