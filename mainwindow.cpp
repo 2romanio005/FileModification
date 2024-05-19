@@ -42,6 +42,8 @@ MainWindow::~MainWindow()
     delete this->buttonGroup_modify;
     delete this->buttonGroup_periodic;
 
+    delete this->timer_periodic;
+
     delete this->ui;
 }
 
@@ -72,6 +74,19 @@ void MainWindow::on_pushButton_select_output_path_clicked()
     }
 }
 
+// вывести все файлы подходящие под маску
+void MainWindow::on_pushButton_use_mask_clicked()
+{
+    QString resultText = "";
+
+    for (QFileInfo &fileInfo : this->getSuitableForMaskFilesInfo()) {
+        resultText.append(fileInfo.absoluteFilePath() + '\n');
+    }
+    // записать результат поиска в поле результата
+    this->ui->textBrowser_result->setText(resultText);
+}
+
+
 // движение слайдера для таймера повторения
 void MainWindow::on_horizontalSlider_period_time_valueChanged(int value)
 {
@@ -101,18 +116,21 @@ void MainWindow::on_pushButton_start_clicked()
     this->modifyDirectory();
 }
 
+// функция которая вызывается по таймеру
 void MainWindow::timerPeriodicAction()
 {
     ++number_of_launches;
     this->modifyDirectory();
 }
 
+// показать информационное окно (оно при ошибках вылазит, наверное можно поменять на critical но как то вроде нет) и остановить таймер
 void MainWindow::showInforamtionMessage(const QString &title, const QString &text)
 {
     this->stopTimerPeriodic();
     QMessageBox::information(this, title, text);
 }
 
+// активировать таймер
 void MainWindow::startTimerPeriodic()
 {
     this->number_of_launches = 1;
@@ -120,6 +138,7 @@ void MainWindow::startTimerPeriodic()
     this->ui->pushButton_start->setText("Остановить переодический запуск модификации файлов");
 }
 
+// диактивировать таймер
 void MainWindow::stopTimerPeriodic()
 {
     if (this->timer_periodic->isActive()) {
@@ -129,6 +148,7 @@ void MainWindow::stopTimerPeriodic()
     }
 }
 
+// получить список файлов исходной директории подходящих под маску
 QList<QFileInfo> MainWindow::getSuitableForMaskFilesInfo()
 {
     QList<QFileInfo> allFilesInfo;
@@ -156,6 +176,7 @@ QList<QFileInfo> MainWindow::getSuitableForMaskFilesInfo()
     return allFilesInfo;
 }
 
+// модифицировать все нужные файлы из выбранной директории и записать их куда надо
 void MainWindow::modifyDirectory()
 {
     bool okResult;
@@ -219,16 +240,5 @@ void MainWindow::modifyDirectory()
         }
     }
     // записать результат работы в соответствующее поле
-    this->ui->textBrowser_result->setText(resultText);
-}
-
-void MainWindow::on_pushButton_use_mask_clicked()
-{
-    QString resultText = "";
-
-    for (QFileInfo &fileInfo : this->getSuitableForMaskFilesInfo()) {
-        resultText.append(fileInfo.absoluteFilePath() + '\n');
-    }
-    // записать результат поиска в поле результата
     this->ui->textBrowser_result->setText(resultText);
 }

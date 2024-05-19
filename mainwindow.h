@@ -26,12 +26,12 @@ private slots:
     void on_pushButton_select_input_path_clicked();
     void on_pushButton_select_output_path_clicked();
 
+    void on_pushButton_use_mask_clicked();
+
     void on_horizontalSlider_period_time_valueChanged(int value);
     void on_lineEdit_period_time_textChanged(const QString &arg1);
 
     void on_pushButton_start_clicked();
-
-    void on_pushButton_use_mask_clicked();
 
 public slots:
     void timerPeriodicAction();
