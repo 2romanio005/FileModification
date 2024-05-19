@@ -164,6 +164,16 @@
       <item>
        <widget class="QTextBrowser" name="textBrowser_result"/>
       </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_result">
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Отключить вывод результатов для быстродействия</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>

@@ -228,10 +228,13 @@ void MainWindow::modifyDirectory()
             inputFile.close();
             outputFile.close();
 
-            resultText.append(inputFile.fileName());
-            resultText.append("\n└─────>\t"); // это красивы стрелочка если что
-            resultText.append(outputFile.fileName());
-            resultText.push_back('\n');
+            if(!this->ui->checkBox_result->isChecked()){
+                resultText.append(inputFile.fileName());
+                resultText.append("\n└─────>\t"); // это красивы стрелочка если что
+                resultText.append(outputFile.fileName());
+                resultText.push_back('\n');
+
+            }
 
             // удаление исходного файла если стоит чекбокс
             if (this->ui->checkBox_input_delete->isChecked()) {
@@ -240,5 +243,7 @@ void MainWindow::modifyDirectory()
         }
     }
     // записать результат работы в соответствующее поле
-    this->ui->textBrowser_result->setText(resultText);
+    if(!this->ui->checkBox_result->isChecked()){
+        this->ui->textBrowser_result->setText(resultText);
+    }
 }
