@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>976</width>
-    <height>567</height>
+    <height>604</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,22 +20,6 @@
       <property name="labelAlignment">
        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
       </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_input_path">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Директория с исходными файлами</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_13">
         <item>
@@ -106,6 +90,22 @@
         </item>
        </layout>
       </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_input_path">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Директория с исходными файлами</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
     <item>
@@ -120,7 +120,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_modify">
         <property name="text">
-         <string>Модифицировать имена результирующих файлов</string>
+         <string>Модифицировать имена повторяемых результирующих файлов</string>
         </property>
         <property name="checked">
          <bool>true</bool>
@@ -130,7 +130,7 @@
       <item>
        <widget class="QRadioButton" name="radioButton_overwrite">
         <property name="text">
-         <string>Перезаписывать результирующие файлы</string>
+         <string>Перезаписывать результирующие файлы с одинаковыми именами</string>
         </property>
        </widget>
       </item>
@@ -265,6 +265,18 @@
     </item>
     <item>
      <widget class="QPushButton" name="pushButton_start">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>40</height>
+       </size>
+      </property>
       <property name="text">
        <string>Запустить модификацию файлов</string>
       </property>
